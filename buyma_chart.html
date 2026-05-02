@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUYMA 月別合計金額</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #f8f7f4;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    width: 100%;
+    max-width: 700px;
+    border: 1px solid #e8e5df;
+  }
+
+  .header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  h1 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: 0.02em;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 0.05em;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+
+  .metric {
+    background: #f8f7f4;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .metric-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .metric-value.warning { color: #d97706; }
+
+  .metric-sub {
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 3px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  .chart-wrap {
+    position: relative;
+    height: 280px;
+    width: 100%;
+  }
+
+  .footer {
+    margin-top: 1rem;
+    font-size: 11px;
+    color: #aaa;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>BUYMA 月別合計金額</h1>
+    <span class="subtitle">2026年 1〜5月</span>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">最高月</div>
+      <div class="metric-value">¥19,575</div>
+      <div class="metric-sub">2026年1月</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">月平均（1〜4月）</div>
+      <div class="metric-value">¥18,174</div>
+      <div class="metric-sub">確定分</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">5月（進行中）</div>
+      <div class="metric-value warning">¥675</div>
+      <div class="metric-sub">5/1のみ</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#6B63D4;"></div>
+      確定分
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#F59E0B;"></div>
+      進行中
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="chart" role="img" aria-label="BUYMA月別合計金額。1月19575円、2月17145円、3月19440円、4月16537円、5月675円（進行中）">
+      月別合計: 1月¥19,575 / 2月¥17,145 / 3月¥19,440 / 4月¥16,538 / 5月¥675
+    </canvas>
+  </div>
+
+  <div class="footer">作業完了日ベース集計 ／ 5月は進行中</div>
+</div>
+
+<script>
+const ctx = document.getElementById('chart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['1月', '2月', '3月', '4月', '5月\n(進行中)'],
+    datasets: [{
+      label: '合計金額',
+      data: [19575, 17145, 19440, 16537.5, 675],
+      backgroundColor: ['#6B63D4','#6B63D4','#6B63D4','#6B63D4','#F59E0B'],
+      borderColor: ['#534AB7','#534AB7','#534AB7','#534AB7','#D97706'],
+      borderWidth: 1,
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ' ¥' + ctx.raw.toLocaleString()
+        },
+        backgroundColor: '#1a1a1a',
+        titleColor: '#fff',
+        bodyColor: '#ccc',
+        padding: 10,
+        cornerRadius: 8,
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          autoSkip: false,
+          color: '#888',
+          font: { size: 12, family: "'Noto Sans JP', sans-serif" }
+        },
+        grid: { display: false },
+        border: { display: false }
+      },
+      y: {
+        beginAtZero: true,
+        max: 22000,
+        ticks: {
+          color: '#aaa',
+          font: { size: 11 },
+          callback: (v) => '¥' + v.toLocaleString()
+        },
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        border: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
